@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Demo Payment</title>
+
+<style>
+body{
+    background:#f2f4f8;
+    font-family: Arial;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    width:350px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    text-align:center;
+}
+
+.amount{
+    font-size:40px;
+    font-weight:bold;
+    color:#27ae60;
+}
+
+.demo{
+    color:red;
+    font-size:13px;
+    margin-top:10px;
+}
+
+button{
+    margin-top:20px;
+    width:100%;
+    padding:14px;
+    border:none;
+    background:#27ae60;
+    color:white;
+    font-size:18px;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h2 id="name">Demo Store</h2>
+
+<div class="amount" id="amount">₹0</div>
+
+<p>UPI: <b id="upi">demo@upi</b></p>
+
+<button onclick="pay()">Pay Now</button>
+
+<div class="demo">
+Demo Only — No Real Payment
+</div>
+
+</div>
+
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+
+document.getElementById("name").innerText =
+params.get("name") || "Demo Store";
+
+document.getElementById("amount").innerText =
+"₹" + (params.get("amount") || "0");
+
+document.getElementById("upi").innerText =
+params.get("upi") || "demo@upi";
+
+function pay(){
+    alert("Payment Successful ✅");
+}
+
+</script>
+
+</body>
+</html>
