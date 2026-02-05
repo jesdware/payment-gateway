@@ -10,7 +10,7 @@
 
 body{
     background:#f4f6fb;
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -19,8 +19,8 @@ body{
 
 .card{
     background:white;
-    width:360px;
-    padding:30px;
+    width:370px;
+    padding:28px;
     border-radius:18px;
     box-shadow:0 15px 40px rgba(0,0,0,0.08);
     text-align:center;
@@ -32,25 +32,33 @@ body{
 }
 
 .amount{
-    font-size:44px;
+    font-size:42px;
     font-weight:bold;
     color:#0a8f5a;
-    margin:18px 0;
+    margin:15px 0;
+}
+
+.qr{
+    margin:15px 0;
 }
 
 .upibox{
     background:#f1f3f6;
-    padding:14px;
+    padding:12px;
     border-radius:10px;
-    word-break:break-all;
     font-weight:bold;
 }
 
 .copy-msg{
     color:#16a085;
-    margin-top:8px;
     display:none;
-    font-weight:bold;
+    margin-top:6px;
+}
+
+.error{
+    color:red;
+    display:none;
+    margin-top:8px;
 }
 
 button{
@@ -59,8 +67,8 @@ button{
     border:none;
     border-radius:10px;
     font-size:17px;
+    margin-top:12px;
     cursor:pointer;
-    margin-top:14px;
 }
 
 .copy-btn{
@@ -68,32 +76,17 @@ button{
     color:white;
 }
 
-.copy-btn:hover{
-    background:#087a4d;
-}
-
 .submit-btn{
     background:#2c3e50;
     color:white;
 }
 
-input{
-    width:100%;
-    padding:14px;
-    margin-top:18px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    font-size:16px;
-}
-
-.success-box{
+.success{
     display:none;
 }
 
-.success-text{
-    font-size:26px;
+.success h2{
     color:#16a085;
-    font-weight:bold;
 }
 
 </style>
@@ -103,20 +96,16 @@ input{
 
 <div class="card">
 
-<!-- PAYMENT SECTION -->
-<div id="paymentSection">
+<div id="payment">
 
-<div class="merchant" id="merchant">
-Business Name
-</div>
+<div class="merchant" id="merchant">Business</div>
 
-<div class="amount" id="amount">
-₹0
-</div>
+<div class="amount" id="amount">₹0</div>
 
-<div class="upibox" id="upi">
-upi@bank
-</div>
+<!-- QR -->
+<img id="qrImage" class="qr" width="200"/>
+
+<div class="upibox" id="upi">upi@bank</div>
 
 <div class="copy-msg" id="copyMsg">
 UPI Copied ✓
@@ -129,9 +118,13 @@ Copy UPI ID
 <input 
 type="text"
 maxlength="12"
-placeholder="Enter 12-digit UTR / Transaction ID"
+placeholder="Enter 12-digit UTR"
 id="utr"
 />
+
+<div class="error" id="error">
+Invalid UTR — enter 12 digits
+</div>
 
 <button class="submit-btn" onclick="submitUTR()">
 Submit
@@ -140,25 +133,20 @@ Submit
 </div>
 
 
-<!-- SUCCESS SECTION -->
-<div class="success-box" id="successBox">
+<div class="success" id="success">
 
-<div class="success-text">
-Payment Successful ✓
-</div>
-
-<p style="margin-top:10px;color:gray;">
-Your payment is being verified.
-</p>
+<h2>Payment Successful ✓</h2>
+<p>Your payment is under verification.</p>
 
 </div>
 
 </div>
+
 
 
 <script>
 
-/* READ VALUES FROM URL */
+/* GET URL DATA */
 
 const params = new URLSearchParams(window.location.search);
 
@@ -166,12 +154,26 @@ const merchant = params.get("name") || "Business";
 const amount = params.get("amount") || "1";
 const upi = params.get("upi") || "upi@bank";
 
+/* SET TEXT */
+
 document.getElementById("merchant").innerText = merchant;
 document.getElementById("amount").innerText = "₹" + amount;
 document.getElementById("upi").innerText = upi;
 
 
-/* COPY UPI */
+/* BUILD PAYMENT STRING */
+
+const paymentString =
+`upi://pay?pa=${upi}&pn=${merchant}&am=${amount}&cu=INR`;
+
+
+/* GENERATE QR */
+
+document.getElementById("qrImage").src =
+`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(paymentString)}`;
+
+
+/* COPY */
 
 function copyUPI(){
 
@@ -188,24 +190,24 @@ msg.style.display="none";
 }
 
 
-/* SUBMIT UTR */
+/* SUBMIT */
 
 function submitUTR(){
 
 const utr = document.getElementById("utr").value;
+const error = document.getElementById("error");
 
 if(utr.length !== 12){
 
-alert("Please enter a valid 12-digit UTR");
+error.style.display="block";
 return;
 
 }
 
-/* Hide payment UI */
-document.getElementById("paymentSection").style.display="none";
+error.style.display="none";
 
-/* Show success */
-document.getElementById("successBox").style.display="block";
+document.getElementById("payment").style.display="none";
+document.getElementById("success").style.display="block";
 
 }
 
