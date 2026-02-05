@@ -46,6 +46,13 @@ body{
     font-weight:bold;
 }
 
+.copy-msg{
+    color:#16a085;
+    margin-top:8px;
+    display:none;
+    font-weight:bold;
+}
+
 button{
     width:100%;
     padding:15px;
@@ -79,12 +86,14 @@ input{
     font-size:16px;
 }
 
-.success{
+.success-box{
     display:none;
+}
+
+.success-text{
+    font-size:26px;
     color:#16a085;
-    font-size:22px;
     font-weight:bold;
-    margin-top:20px;
 }
 
 </style>
@@ -92,7 +101,10 @@ input{
 
 <body>
 
-<div class="card" id="paymentBox">
+<div class="card">
+
+<!-- PAYMENT SECTION -->
+<div id="paymentSection">
 
 <div class="merchant" id="merchant">
 Business Name
@@ -104,6 +116,10 @@ Business Name
 
 <div class="upibox" id="upi">
 upi@bank
+</div>
+
+<div class="copy-msg" id="copyMsg">
+UPI Copied ✓
 </div>
 
 <button class="copy-btn" onclick="copyUPI()">
@@ -121,8 +137,20 @@ id="utr"
 Submit
 </button>
 
-<div class="success" id="successMsg">
-Payment Successful ✅
+</div>
+
+
+<!-- SUCCESS SECTION -->
+<div class="success-box" id="successBox">
+
+<div class="success-text">
+Payment Successful ✓
+</div>
+
+<p style="margin-top:10px;color:gray;">
+Your payment is being verified.
+</p>
+
 </div>
 
 </div>
@@ -130,7 +158,7 @@ Payment Successful ✅
 
 <script>
 
-/* GET URL VALUES */
+/* READ VALUES FROM URL */
 
 const params = new URLSearchParams(window.location.search);
 
@@ -149,7 +177,13 @@ function copyUPI(){
 
 navigator.clipboard.writeText(upi);
 
-alert("UPI ID copied");
+const msg = document.getElementById("copyMsg");
+
+msg.style.display="block";
+
+setTimeout(()=>{
+msg.style.display="none";
+},2000);
 
 }
 
@@ -167,12 +201,11 @@ return;
 
 }
 
-/* Hide form */
-document.getElementById("utr").style.display="none";
-document.querySelector(".submit-btn").style.display="none";
+/* Hide payment UI */
+document.getElementById("paymentSection").style.display="none";
 
 /* Show success */
-document.getElementById("successMsg").style.display="block";
+document.getElementById("successBox").style.display="block";
 
 }
 
